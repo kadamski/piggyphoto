@@ -215,18 +215,14 @@ class camera(object):
             self.init()
 
     def init(self):
-        if self.initialized:
-            print("Camera is already initialized.")
         ans = 0
         for i in range(1 + retries):
             ans = gp.gp_camera_init(self._cam, context)
             if ans == 0:
                 break
             elif ans == -60:
-                print("***", unmount_cmd)
                 os.system(unmount_cmd)
                 time.sleep(1)
-                print("camera.init() retry #%d..." % (i))
         check(ans)
         self.initialized = True
 
@@ -300,7 +296,6 @@ class camera(object):
         for i in range(1 + retries):
             ans = gp.gp_camera_capture(self._cam, GP_CAPTURE_IMAGE, PTR(path), context)
             if ans == 0: break
-            else: print("capture_image(%s) retry #%d..." % (destpath, i))
         check(ans)
 
         if destpath:
@@ -316,7 +311,6 @@ class camera(object):
         for i in range(1 + retries):
             ans = gp.gp_camera_capture_preview(self._cam, cfile._cf, context)
             if ans == 0: break
-            else: print("capture_preview(%s) retry #%d..." % (destpath, i))
         check(ans)
 
         if destpath:
@@ -351,7 +345,6 @@ class camera(object):
             for c in children:
                 self._list_config(c, cfglist, path + "." + c.name)
         else:
-            print(path, "=", widget.value)
             cfglist.append(path)
 
     def list_config(self):
