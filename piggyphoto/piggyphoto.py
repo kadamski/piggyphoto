@@ -320,7 +320,7 @@ class camera(object):
             else: print("delete_image(%s, %s) retry #%d..." % (folder, name, i))
         check(ans)
 
-    def delete_all_images(self, path):
+    def delete_all_images(self, path='/'):
         for file in self.list_all_files(path):
             self.delete_image(file)
 
