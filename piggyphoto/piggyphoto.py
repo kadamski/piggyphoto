@@ -189,7 +189,7 @@ class libgphoto2error(Exception):
         self.result = result
         self.message = message
     def __str__(self):
-        return self.message + ' (' + str(self.result) + ')'
+        return "{} ({})".format(self.message, self.result)
 
 def check(result):
     if result < 0:
@@ -337,12 +337,12 @@ class camera(object):
 
     def list_folders(self, path = "/"):
         l = cameraList()
-        check(gp.gp_camera_folder_list_folders(self._cam, str(path), l._l, context));
+        check(gp.gp_camera_folder_list_folders(self._cam, path, l._l, context));
         return l.toList()
 
     def list_files(self, path = "/"):
         l = cameraList()
-        check(gp.gp_camera_folder_list_files(self._cam, str(path), l._l, context));
+        check(gp.gp_camera_folder_list_files(self._cam, path, l._l, context));
         return l.toList()
 
     def _list_config(self, widget, cfglist, path):
@@ -494,7 +494,7 @@ class cameraList(object):
                 il.count()
                 al = cameraAbilitiesList()
                 al.detect(il, xlist)
-                for i in xrange(xlist.count()):
+                for i in range(xlist.count()):
                     model = xlist.get_name(i)
                     path = xlist.get_value(i)
                     if re.match(r'usb:\d{3},\d{3}', path):
@@ -557,7 +557,7 @@ class cameraList(object):
         return header + '\n'.join(contents)
 
     def toList(self):
-        return [(self.get_name(i), self.get_value(i)) for i in xrange(self.count())]
+        return [(self.get_name(i), self.get_value(i)) for i in range(self.count())]
         xlist = []
         for i in range(self.count()):
             n, v = self.get_name(i), self.get_value(i)
