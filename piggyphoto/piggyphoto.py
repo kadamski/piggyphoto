@@ -308,6 +308,22 @@ class camera(object):
         else:
             return (path.folder, path.name)
 
+    def delete_image(self, path):
+        folder, name = os.path.split(path)
+        folder = folder.encode('ascii')
+        name = name.encode('ascii')
+
+        ans = 0
+        for i in range(1 + retries):
+            ans = gp.gp_camera_file_delete(self._cam, folder, name, context)
+            if ans == 0: break
+            else: print("delete_image(%s, %s) retry #%d..." % (folder, name, i))
+        check(ans)
+
+    def delete_all_images(self, path):
+        for file in self.list_all_files(path):
+            self.delete_image(file)
+
     def capture_preview(self, destpath = None):
         path = CameraFilePath()
         cfile = cameraFile()
@@ -344,6 +360,22 @@ class camera(object):
         l = cameraList()
         check(gp.gp_camera_folder_list_files(self._cam, path, l._l, context));
         return l.toList()
+
+    def list_all_files(self, path = "/"):
+        l = cameraList()
+        folders = []
+        result = []
+
+        check(gp.gp_camera_folder_list_files(self._cam, path.encode("ascii"), l._l, context));
+        for f in l.toList():
+            result.append(os.path.join(path, f[0].decode('ascii')))
+
+        check(gp.gp_camera_folder_list_folders(self._cam, path.encode("ascii"), l._l, context));
+
+        for f in l.toList():
+            result.extend(self.list_all_files(os.path.join(path, f[0].decode('ascii'))))
+
+        return result
 
     def _list_config(self, widget, cfglist, path):
         children = widget.children
